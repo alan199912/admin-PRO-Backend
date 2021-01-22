@@ -6,6 +6,7 @@ const dbConnect = async () => {
       useNewUrlParser: true,
       useUnifiedTopology: true,
       useCreateIndex: true,
+      useFindAndModify: false
     });
 
     console.log("DB create successfully");
