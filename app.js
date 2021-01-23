@@ -25,6 +25,9 @@ app.use(cors());
 // * connection db
 dbConnect();
 
+// * dir public
+app.use(express.static('public'))
+
 // * enpoints
 app.use("/api/users", userRoute);
 app.use("/api/auth", authRoute);
