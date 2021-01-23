@@ -5,11 +5,18 @@ const { generateJWT } = require('../helpers/jwt');
 
 const getUsers = async (req, res) => {
 
-  const users = await User.find()
+  const pagination = Number(req.query.pagination) || 0
+
+  // * runs simultaneously
+  const [ users, totalRecord ] = await Promise.all([
+    User.find({}, 'name email role google img').skip( pagination ).limit(5),
+    User.countDocuments()
+  ])
 
   res.json({
     status: 'success',
-    users
+    users,
+    totalRecord
   });
 };
 
