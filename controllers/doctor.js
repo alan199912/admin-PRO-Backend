@@ -29,7 +29,7 @@ const createDoctor = async (req, res) => {
 
         const doctorCreated = await doctor.save()
 
-        res.json({
+        res.status(201).json({
             status: 'success',
             doctorCreated
         })
@@ -41,30 +41,45 @@ const createDoctor = async (req, res) => {
     }
 }
 
-const updateDoctor = (req, res) => {
+const updateDoctor = async (req, res) => {
+
+    const uid = req.id
+
     try {
-        res.json({
+
+        const doctorUpdated = {
+            user: uid,
+            ...req.body
+        }
+
+        await Doctor.findByIdAndUpdate(req.params.id, doctorUpdated, { new: true })
+
+        res.status(201).json({
             status: 'success',
-            msg: 'update a doctor'
+            msg: 'Doctor Update successfully'
         })
     } catch (error) {
         res.status(500).json({
             status: 'fail',
-            msg: 'Error unexpected'
+            msg: 'Doctor not found'
         })
     }
 }
 
-const deleteDoctor = (req, res) => {
+const deleteDoctor = async (req, res) => {
+
     try {
+
+        await Doctor.findByIdAndDelete(req.params.id)
+
         res.json({
             status: 'success',
-            msg: 'delete a doctor'
+            msg: 'Doctor deleted successfully'
         })
     } catch (error) {
         res.status(500).json({
             status: 'fail',
-            msg: 'Error unexpected'
+            msg: 'Doctor not found'
         })
     }
 }

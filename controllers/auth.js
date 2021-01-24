@@ -43,11 +43,9 @@ const login = async (req, res) => {
 }
 
 const googleSignIn = async (req, res) => {
-
     const googleToken = req.body.token
     
     try {
-
         const { name, email, picture } = await googleVerify(googleToken)
 
         // * verify email in bd
@@ -69,7 +67,6 @@ const googleSignIn = async (req, res) => {
         
         // * save on db
         await user.save()
-
         const token = await generateJWT(user.id)
 
         res.json({
@@ -77,17 +74,34 @@ const googleSignIn = async (req, res) => {
             token
         })
     } catch (error) {
-        
         res.status(401).json({
-            status: 'success',
+            status: 'fail',
             msg: 'Token no found'
         })
     }
+}
 
+const renewToken = async (req, res) => {
+    const uid = req.id
 
+    try {
+
+        const token = await generateJWT(uid)
+
+        res.status(200).json({
+            status: 'success',
+            token
+        })
+    } catch (error) {
+        res.status(500).json({
+            status: 'fail',
+            msg: 'Token no found'
+        })
+    }
 }
 
 module.exports = {
     login,
-    googleSignIn
+    googleSignIn,
+    renewToken
 }

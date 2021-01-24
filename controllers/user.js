@@ -69,16 +69,6 @@ const updateUser = async (req, res) => {
 
   try {
 
-    const userExists = await User.findById(req.params.id)
-
-    // * verify if user exists
-    if(!userExists) {
-      return res.status(400).json({
-        status: 'warning',
-        msg: 'User not exists'
-      })
-    }
-
     if(userExists.email !== email) {
       const emailExists = await User.findOne({ email })
 
@@ -104,7 +94,7 @@ const updateUser = async (req, res) => {
     console.log(error)
     res.status(500).json({
       status: 'fail',
-      msg: 'Error unexpected'
+      msg: 'User not found'
     })
   }
 
@@ -114,18 +104,7 @@ const deleteUser = async (req, res) => {
 
   try {
 
-    const userExists = await User.findById(req.params.id)
-
-    // * verify if user exists
-    if(!userExists) {
-      return res.status(400).json({
-        status: 'warning',
-        msg: 'User not exists'
-      })
-    }
-
-
-    await User.findByIdAndRemove(req.params.id)
+    await User.findByIdAndDelete(req.params.id)
     
     res.json({
       status: 'success',
@@ -136,7 +115,7 @@ const deleteUser = async (req, res) => {
     console.log(error)
     res.status(500).json({
       status: 'fail',
-      msg: 'Error unexpected'
+      msg: 'User not found'
     })
   }
 

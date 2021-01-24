@@ -24,11 +24,11 @@ const createHospital = async (req, res) => {
     })
     
     // * save user
-    const hispotalCreated = await hospital.save();
+    const hospitalCreated = await hospital.save();
     
     res.json({
       status: 'success',
-      hispotalCreated
+      hospitalCreated
     });
     
   } catch (error) {
@@ -43,46 +43,40 @@ const createHospital = async (req, res) => {
 
 const updateHospital = async (req, res) => {
 
-  // const { password, google, email, ...fields } = req.body
+  const { name } =  req.body
+  const uid = req.id
 
   try {
 
-    // const userExists = await User.findById(req.params.id)
+    if(hospitalExists.name !== name) {
+      const nameExists = await Hospital.findOne({ name })
 
-    // // * verify if user exists
-    // if(!userExists) {
-    //   return res.status(400).json({
-    //     status: 'warning',
-    //     msg: 'User not exists'
-    //   })
-    // }
+      // * verify if email exists
+      if(nameExists) {
+        return res.status(400).json({
+          status: 'warning',
+          msg: 'Already exists an Hospital with this name'
+        })
+      }
+    }
 
-    // if(userExists.email !== email) {
-    //   const emailExists = await User.findOne({ email })
+    const updatedHospital = {
+      ...req.body,
+      user: uid
+    }
 
-    //   // * verify if email exists
-    //   if(emailExists) {
-    //     return res.status(400).json({
-    //       status: 'warning',
-    //       msg: 'Email already exists'
-    //     })
-    //   }
-    // }
-
-    // fields.email = email
-
-    // await User.findByIdAndUpdate(req.params.id, fields, { new: true })
+    await Hospital.findByIdAndUpdate(req.params.id, updatedHospital, { new: true })
     
     res.json({
       status: 'success',
-      msg: 'User edited successfully'
+      msg: 'Hospital edited successfully'
     });
     
   } catch (error) {
     console.log(error)
     res.status(500).json({
       status: 'fail',
-      msg: 'Error unexpected'
+      msg: 'Hospital not found'
     })
   }
 
@@ -92,29 +86,18 @@ const deleteHospital = async (req, res) => {
 
   try {
 
-    // const userExists = await User.findById(req.params.id)
-
-    // // * verify if user exists
-    // if(!userExists) {
-    //   return res.status(400).json({
-    //     status: 'warning',
-    //     msg: 'User not exists'
-    //   })
-    // }
-
-
-    // await User.findByIdAndRemove(req.params.id)
+    await Hospital.findByIdAndDelete(req.params.id)
     
     res.json({
       status: 'success',
-      msg: 'User deleted successfully'
+      msg: 'Hospital deleted successfully'
     });
     
   } catch (error) {
     console.log(error)
     res.status(500).json({
       status: 'fail',
-      msg: 'Error unexpected'
+      msg: 'Hospital not found'
     })
   }
 
