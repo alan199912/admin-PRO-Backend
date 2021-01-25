@@ -83,6 +83,9 @@ const googleSignIn = async (req, res) => {
 
 const renewToken = async (req, res) => {
     const uid = req.id
+    
+    // * verify email in bd
+    const user = await User.findById(uid)
 
     try {
 
@@ -90,7 +93,8 @@ const renewToken = async (req, res) => {
 
         res.status(200).json({
             status: 'success',
-            token
+            token,
+            user
         })
     } catch (error) {
         res.status(500).json({
