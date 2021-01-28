@@ -8,7 +8,7 @@ const fileUpload = async (req, res) => {
     
     try {
 
-        const { collection, id } = req.params
+        const { collection, _id } = req.params
 
         const collectionValids = ['users', 'doctors', 'hospitals']
 
@@ -23,7 +23,8 @@ const fileUpload = async (req, res) => {
         if(!req.files || Object.keys(req.files).length === 0) {
             return res.status(400).json({
                 status: 'warning',
-                msg: 'No files were uploaded.'
+                msg: 'No files were uploaded.',
+                body: req.files
             })
         }
 
@@ -58,21 +59,21 @@ const fileUpload = async (req, res) => {
                     msg: 'Error trying to save the img.'
                 })
             }
-
             // * update DB
-            updateImg(collection, id, nameFile)
+            updateImg(collection, _id, nameFile)
 
             res.status(200).json({
                 status: 'success',
                 msg: 'File Upload !',
-                nameFile
+                file: nameFile
             })
         })
 
     } catch (error) {
         res.status(500).json({
             status: 'fail',
-            msg: 'Error unexpected'
+            msg: 'Error unexpected',
+            error: error.message
         })
     }
 }
@@ -90,11 +91,6 @@ const saveImg = (req, res) => {
         const dafaultImg = path.join( __dirname, `../uploads/no-img.jpg` )
         res.sendFile( dafaultImg )
     }
-
-
-    // var serveIndex = require('serve-index');
-// app.use(express.static(__dirname + '/'))
-// app.use('/uploads', serveIndex(__dirname + '/uploads'));
 }
 
 module.exports = {

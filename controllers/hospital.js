@@ -48,6 +48,20 @@ const updateHospital = async (req, res) => {
 
   try {
 
+    const hospitalExists = await Hospital.findById(req.params.id);
+
+    if(hospitalExists.email !== email) {
+      const emailExists = await Hospital.findOne({ email })
+
+        // * verify if email exists
+        if(emailExists) {
+            return res.status(400).json({
+              status: 'warning',
+              msg: 'Email already exists',
+            })
+        }
+    }
+
     if(hospitalExists.name !== name) {
       const nameExists = await Hospital.findOne({ name })
 
@@ -65,11 +79,12 @@ const updateHospital = async (req, res) => {
       user: uid
     }
 
-    await Hospital.findByIdAndUpdate(req.params.id, updatedHospital, { new: true })
+    const hospitalUpdatedShow = await Hospital.findByIdAndUpdate(req.params.id, updatedHospital, { new: true })
     
     res.json({
       status: 'success',
-      msg: 'Hospital edited successfully'
+      msg: 'Hospital edited successfully',
+      hospitalUpdatedShow
     });
     
   } catch (error) {

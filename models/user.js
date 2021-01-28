@@ -30,9 +30,7 @@ const UserSchema = Schema({
 
 // * properties dont visible into response
 UserSchema.method('toJSON', function() {
-    const { __v, _id, password,...object } = this.toObject();
-
-    object.uid = _id;
+    const { __v, password,...object } = this.toObject();
     
     return object
 })

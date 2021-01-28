@@ -57,7 +57,8 @@ const createUsers = async (req, res) => {
     console.log(error)
     res.status(500).json({
       status: 'fail',
-      msg: 'Error unexpected'
+      msg: 'Error unexpected',
+      user
     })
   }
 
@@ -69,6 +70,8 @@ const updateUser = async (req, res) => {
 
   try {
 
+    const userExists = await User.findById(req.params.id);
+
     if(userExists.email !== email) {
       const emailExists = await User.findOne({ email })
 
@@ -76,18 +79,20 @@ const updateUser = async (req, res) => {
       if(emailExists) {
         return res.status(400).json({
           status: 'warning',
-          msg: 'Email already exists'
+          msg: 'Email already exists',
         })
       }
     }
+    if(!userExists.google) {
+      fields.email = email
+    }
 
-    fields.email = email
-
-    await User.findByIdAndUpdate(req.params.id, fields, { new: true })
+    const userUpdated = await User.findByIdAndUpdate(req.params.id, fields, { new: true })
     
     res.json({
       status: 'success',
-      msg: 'User edited successfully'
+      msg: 'User edited successfully',
+      userUpdated
     });
     
   } catch (error) {

@@ -36,7 +36,8 @@ const createDoctor = async (req, res) => {
     } catch (error) {
         res.status(500).json({
             status: 'fail',
-            msg: 'Error unexpected'
+            msg: 'Error unexpected',
+            doctorCreated
         })
     }
 }
@@ -47,16 +48,31 @@ const updateDoctor = async (req, res) => {
 
     try {
 
+        const doctorExists = await Doctor.findById(req.params.id);
+
+        if(doctorExists.email !== email) {
+        const emailExists = await Doctor.findOne({ email })
+
+            // * verify if email exists
+            if(emailExists) {
+                return res.status(400).json({
+                status: 'warning',
+                msg: 'Email already exists',
+                })
+            }
+        }
+
         const doctorUpdated = {
             user: uid,
             ...req.body
         }
 
-        await Doctor.findByIdAndUpdate(req.params.id, doctorUpdated, { new: true })
+        const doctorUpdatedShow = await Doctor.findByIdAndUpdate(req.params.id, doctorUpdated, { new: true })
 
         res.status(201).json({
             status: 'success',
-            msg: 'Doctor Update successfully'
+            msg: 'Doctor Update successfully',
+            doctorUpdatedShow
         })
     } catch (error) {
         res.status(500).json({
