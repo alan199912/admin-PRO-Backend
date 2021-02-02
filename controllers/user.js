@@ -20,6 +20,23 @@ const getUsers = async (req, res) => {
   });
 };
 
+const getUsersId = async (req, res) => {
+  try {
+  const user = await User.findById(req.params.id)
+
+  res.json({
+    status: 'success',
+    user
+  })
+  } catch (error) {
+    console.log(error)
+    res.status(404).json({
+      status: 'success',
+      msg: 'user not found'
+    })
+  }
+}
+
 const createUsers = async (req, res) => {
 
   const { email, password } = req.body
@@ -128,6 +145,7 @@ const deleteUser = async (req, res) => {
 
 module.exports = {
   getUsers,
+  getUsersId,
   createUsers,
   updateUser,
   deleteUser

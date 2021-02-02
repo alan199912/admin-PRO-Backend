@@ -1,109 +1,115 @@
-const Doctor = require('../models/doctor')
+const Doctor = require("../models/doctor");
 
 const getDoctor = async (req, res) => {
-    try {
+  try {
+    const doctors = await Doctor.find()
+      .populate("user", "name")
+      .populate("hospital", "name");
 
-        const doctors = await Doctor.find().populate('user', 'name').populate('hospital', 'name')
+    res.json({
+      status: "success",
+      doctors,
+    });
+  } catch (error) {
+    res.status(500).json({
+      status: "fail",
+      msg: "Error unexpected",
+    });
+  }
+};
 
-        res.json({
-            status: 'success',
-            doctors
-        })
-    } catch (error) {
-        res.status(500).json({
-            status: 'fail',
-            msg: 'Error unexpected'
-        })
-    }
-}
+const getDoctorId = async (req, res) => {
+  try {
+    const doctor = await Doctor.findById(req.params.id);
+
+    res.json({
+      status: "success",
+      doctor,
+    });
+  } catch (error) {
+    console.log(error);
+    res.status(500).json({
+      status: "fail",
+      msg: "Error unexpected",
+    });
+  }
+};
 
 const createDoctor = async (req, res) => {
-    try {
+  try {
+    const uid = req.id;
 
-        const uid = req.id
-        
-        const doctor = new Doctor({
-            user: uid,
-            ...req.body
-        })
+    const doctor = new Doctor({
+      user: uid,
+      ...req.body,
+    });
 
-        const doctorCreated = await doctor.save()
+    const doctorCreated = await doctor.save();
 
-        res.status(201).json({
-            status: 'success',
-            doctorCreated
-        })
-    } catch (error) {
-        res.status(500).json({
-            status: 'fail',
-            msg: 'Error unexpected',
-            doctorCreated
-        })
-    }
-}
+    res.status(201).json({
+      status: "success",
+      doctorCreated,
+    });
+  } catch (error) {
+    res.status(500).json({
+      status: "fail",
+      msg: "Error unexpected",
+      doctorCreated,
+    });
+  }
+};
 
 const updateDoctor = async (req, res) => {
+  const uid = req.id;
 
-    const uid = req.id
+  try {
+    const doctorExists = await Doctor.findById(req.params.id);
 
-    try {
+    const doctorUpdated = {
+      user: uid,
+      ...req.body,
+    };
 
-        const doctorExists = await Doctor.findById(req.params.id);
+    const doctorUpdatedShow = await Doctor.findByIdAndUpdate(
+      req.params.id,
+      doctorUpdated,
+      { new: true }
+    );
 
-        if(doctorExists.email !== email) {
-        const emailExists = await Doctor.findOne({ email })
-
-            // * verify if email exists
-            if(emailExists) {
-                return res.status(400).json({
-                status: 'warning',
-                msg: 'Email already exists',
-                })
-            }
-        }
-
-        const doctorUpdated = {
-            user: uid,
-            ...req.body
-        }
-
-        const doctorUpdatedShow = await Doctor.findByIdAndUpdate(req.params.id, doctorUpdated, { new: true })
-
-        res.status(201).json({
-            status: 'success',
-            msg: 'Doctor Update successfully',
-            doctorUpdatedShow
-        })
-    } catch (error) {
-        res.status(500).json({
-            status: 'fail',
-            msg: 'Doctor not found'
-        })
-    }
-}
+    res.status(201).json({
+      status: "success",
+      msg: "Doctor Update successfully",
+      doctorUpdatedShow,
+    });
+  } catch (error) {
+    console.log(error);
+    res.status(500).json({
+      status: "fail",
+      msg: "Doctor not found",
+    });
+  }
+};
 
 const deleteDoctor = async (req, res) => {
+  try {
+    await Doctor.findByIdAndDelete(req.params.id);
 
-    try {
-
-        await Doctor.findByIdAndDelete(req.params.id)
-
-        res.json({
-            status: 'success',
-            msg: 'Doctor deleted successfully'
-        })
-    } catch (error) {
-        res.status(500).json({
-            status: 'fail',
-            msg: 'Doctor not found'
-        })
-    }
-}
+    res.json({
+      status: "success",
+      msg: "Doctor deleted successfully",
+    });
+  } catch (error) {
+    res.status(500).json({
+      status: "fail",
+      msg: "Doctor not found",
+    });
+  }
+};
 
 module.exports = {
-    getDoctor,
-    createDoctor,
-    updateDoctor,
-    deleteDoctor,
-}
-
+  getDoctor,
+  getDoctorId,
+  createDoctor,
+  updateDoctor,
+  deleteDoctor,
+};

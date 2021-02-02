@@ -5,11 +5,12 @@ const { check } = require('express-validator')
 const { fieldsValidate } = require('../middlewares/fields-validate')
 const { validateJWT } = require('../middlewares/validateJWT')
 
-const { getUsers, createUsers, updateUser, deleteUser } = require('../controllers/user')
+const { getUsers, createUsers, updateUser, deleteUser, getUsersId } = require('../controllers/user')
 
 const router = Router()
 
 router.get('/', validateJWT, getUsers)
+router.get('/:id', validateJWT, getUsersId)
 router.post('/', [
     check('name', 'The name is required').not().isEmpty(),
     check('password','The password is required').not().isEmpty(),
