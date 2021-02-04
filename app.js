@@ -1,16 +1,16 @@
 require("dotenv").config();
-
+const path = require("path");
 const express = require("express");
 const cors = require("cors");
-const morgan = require('morgan')
+const morgan = require("morgan");
 
 // * Routes
 const userRoute = require("./routes/user");
 const authRoute = require("./routes/auth");
 const hospitalRoute = require("./routes/hospital");
 const doctorRoute = require("./routes/doctor");
-const searchRoute = require('./routes/search')
-const uploadRoute = require('./routes/upload')
+const searchRoute = require("./routes/search");
+const uploadRoute = require("./routes/upload");
 
 const { dbConnect } = require("./db/config");
 
@@ -18,8 +18,8 @@ const { dbConnect } = require("./db/config");
 const app = express();
 
 // * Reading and pars the body
-app.use(express.json())
-app.use(morgan('dev'))
+app.use(express.json());
+app.use(morgan("dev"));
 // * CORS
 app.use(cors());
 
@@ -27,7 +27,7 @@ app.use(cors());
 dbConnect();
 
 // * dir public
-app.use(express.static('public'))
+app.use(express.static("public"));
 
 // * enpoints
 app.use("/api/users", userRoute);
@@ -36,6 +36,9 @@ app.use("/api/hospitals", hospitalRoute);
 app.use("/api/doctors", doctorRoute);
 app.use("/api/searches", searchRoute);
 app.use("/api/uploads", uploadRoute);
+app.get("*", (req, res) => {
+  res.sendFile(path.resolve(__dirname, "public/index.html"));
+});
 
 app.listen(process.env.PORT, () => {
   console.log("Server run at port ", process.env.PORT);
