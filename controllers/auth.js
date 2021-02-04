@@ -37,7 +37,7 @@ const login = async (req, res) => {
     console.log(error);
     res.status(500).json({
       status: "Fail",
-      msg: "Error unexpected",
+      msg: error.message,
     });
   }
 };
